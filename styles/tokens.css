@@ -1,0 +1,370 @@
+/* =============================================================
+   PTGL — design tokens
+   Import this first. All components depend on these variables.
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Gloock&family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+
+:root {
+  /* ---------- COLOR ---------- */
+
+  /* Base */
+  --paper:        #FFF7E0;  /* bright sunlit cream — default background */
+  --paper-2:      #FBEEC2;  /* paper, warmer buttery tint — section alt bg */
+  --paper-3:      #F4E29B;  /* card resting on paper, soft yellow */
+  --sun:          #FFD23F;  /* saturated yellow highlight */
+  --silver:       #DCE3E8;  /* cool silver — chrome / glints */
+  --silver-2:     #EFF2F5;  /* pearl silver — tints / chips */
+  --silver-d:     #A9B4BE;  /* silver deep — strokes */
+  --ink:          #1C1A2E;  /* deep blue-black — all body text */
+  --ink-soft:     #3F3A5A;  /* secondary text */
+  --ink-muted:    #7A7490;  /* placeholder, meta */
+
+  /* Ink alphas (for borders / shadows) */
+  --ink-04:       rgba(28, 26, 46, 0.04);
+  --ink-08:       rgba(28, 26, 46, 0.08);
+  --ink-12:       rgba(28, 26, 46, 0.12);
+  --ink-20:       rgba(28, 26, 46, 0.20);
+  --ink-40:       rgba(28, 26, 46, 0.40);
+  --ink-60:       rgba(28, 26, 46, 0.60);
+
+  /* Four joyful accents */
+  --tangerine:    #F26B3A;  /* primary action, energy */
+  --tangerine-d:  #C54E22;  /* pressed / border of tangerine chip */
+  --tangerine-l:  #FEDFCF;  /* tinted bg */
+  --tangerine-20: rgba(242, 107, 58, 0.20);
+
+  --grape:        #7952D8;  /* reward, achievement */
+  --grape-d:      #5A38B0;
+  --grape-l:      #E4D9FA;
+  --grape-20:     rgba(121, 82, 216, 0.20);
+
+  --leaf:         #2C9E5E;  /* progress, correct */
+  --leaf-d:       #1E7A47;
+  --leaf-l:       #CDEBD9;
+  --leaf-20:      rgba(44, 158, 94, 0.20);
+
+  --sky:          #3A8CCC;  /* info, quiet */
+  --sky-d:        #256CA3;
+  --sky-l:        #D2E6F4;
+  --sky-20:       rgba(58, 140, 204, 0.20);
+
+  --clay:         #C87353;  /* terracotta warmth, illustrative */
+  --clay-d:       #9C5539;
+  --clay-l:       #F3D9C9;
+
+  /* Semantic */
+  --bg:           var(--paper);
+  --bg-alt:       var(--paper-2);
+  --surface:      #FFFEF5;      /* lifted card surface, one notch above paper */
+  --border:       var(--ink-12);
+  --border-strong:var(--ink-20);
+  --text:         var(--ink);
+  --text-soft:    var(--ink-soft);
+  --text-muted:   var(--ink-muted);
+  --link:         var(--grape-d);
+
+  --success:      var(--leaf);
+  --success-bg:   var(--leaf-l);
+  --warning:      #D99A2B;
+  --warning-bg:   #FBEBC8;
+  --danger:       #C8452E;
+  --danger-bg:    #F6D5CE;
+  --info:         var(--sky);
+  --info-bg:      var(--sky-l);
+
+  /* ---------- TYPE ---------- */
+
+  --font-display: 'Gloock', 'Cormorant Garamond', Georgia, serif;
+  --font-sans:    'Nunito', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --fw-regular: 400;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+  --fw-black: 900;
+
+  /* Fluid-ish type scale — pick the right slot, don't invent new sizes */
+  --text-xs:    11px;  /* eyebrow all-caps */
+  --text-sm:    13px;  /* meta, captions */
+  --text-base:  15px;  /* default body */
+  --text-md:    17px;  /* comfortable body */
+  --text-lg:    20px;  /* lead body */
+  --text-xl:    24px;  /* small section title */
+  --text-2xl:   32px;  /* section title */
+  --text-3xl:   48px;  /* display S */
+  --text-4xl:   72px;  /* display M */
+  --text-5xl:   96px;  /* display L (hero) */
+
+  --lh-tight:   1.08;
+  --lh-snug:    1.25;
+  --lh-normal:  1.45;
+  --lh-loose:   1.65;
+
+  --ls-tight:   -0.02em;
+  --ls-normal:  0;
+  --ls-wide:    0.04em;
+  --ls-caps:    0.12em;
+
+  /* ---------- SPACING ---------- */
+  /* 4px base grid */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  20px;
+  --s-6:  24px;
+  --s-8:  32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+  --s-24: 96px;
+
+  /* ---------- RADIUS ---------- */
+  --r-sm:   8px;   /* inputs, dense rows */
+  --r-md:   12px;
+  --r-lg:   16px;  /* default card */
+  --r-xl:   24px;  /* sheets, hero */
+  --r-pill: 9999px;
+
+  /* ---------- SHADOW ---------- */
+  --shadow-sticker: 0 2px 0 var(--ink-08);
+  --shadow-shelf:   0 3px 0 var(--ink);
+  --shadow-shelf-hover: 0 4px 0 var(--ink);
+  --shadow-float:   0 12px 32px -12px var(--ink-20), 0 2px 4px -2px var(--ink-12);
+  --shadow-inset:   inset 0 1px 2px var(--ink-08);
+  --shadow-ring:    0 0 0 3px var(--tangerine-20);
+
+  /* ---------- MOTION ---------- */
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:     cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
+
+  --dur-micro:    180ms;
+  --dur-base:     320ms;
+  --dur-hero:     640ms;
+
+  /* ---------- LAYOUT ---------- */
+  --container-max: 1120px;
+  --nav-h-mobile:  72px;  /* tab bar */
+  --nav-h-web:     64px;
+}
+
+/* =============================================================
+   SEMANTIC ELEMENT STYLES
+   These set sensible defaults so raw HTML looks on-brand.
+   ============================================================= */
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--lh-normal);
+  font-weight: var(--fw-regular);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, .h1 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-regular); /* Gloock only ships one weight */
+  font-size: var(--text-4xl);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  color: var(--ink);
+  margin: 0;
+}
+
+h2, .h2 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-regular);
+  font-size: var(--text-3xl);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-tight);
+  color: var(--ink);
+  margin: 0;
+}
+
+h3, .h3 {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-2xl);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-tight);
+  color: var(--ink);
+  margin: 0;
+}
+
+h4, .h4 {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-xl);
+  line-height: var(--lh-snug);
+  color: var(--ink);
+  margin: 0;
+}
+
+p, .body {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-regular);
+  font-size: var(--text-md);
+  line-height: var(--lh-normal);
+  color: var(--text);
+  margin: 0;
+}
+
+.lead {
+  font-size: var(--text-lg);
+  line-height: var(--lh-normal);
+  color: var(--text-soft);
+}
+
+.meta {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-bold);
+  font-size: var(--text-xs);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+code, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+
+a, .link {
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1.5px solid transparent;
+  transition: border-color var(--dur-micro) var(--ease-out);
+}
+a:hover, .link:hover {
+  border-bottom-color: var(--link);
+}
+
+/* =============================================================
+   REUSABLE UTILITIES
+   ============================================================= */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sticker);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--text-md);
+  line-height: 1;
+  padding: 14px 22px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--ink);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform var(--dur-micro) var(--ease-spring),
+    box-shadow var(--dur-micro) var(--ease-spring),
+    background-color var(--dur-micro) var(--ease-out);
+}
+.btn--primary {
+  background: var(--tangerine);
+  color: var(--ink);
+  box-shadow: var(--shadow-shelf);
+}
+.btn--primary:hover {
+  box-shadow: var(--shadow-shelf-hover);
+  transform: translateY(-1px);
+}
+.btn--primary:active {
+  box-shadow: 0 0 0 var(--ink);
+  transform: translateY(3px);
+}
+.btn--secondary {
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--shadow-shelf);
+}
+.btn--secondary:hover {
+  box-shadow: var(--shadow-shelf-hover);
+  transform: translateY(-1px);
+}
+.btn--secondary:active {
+  box-shadow: 0 0 0 var(--ink);
+  transform: translateY(3px);
+}
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--ink);
+}
+.btn--ghost:hover { background: var(--ink-04); }
+.btn--sm { padding: 9px 14px; font-size: var(--text-sm); }
+.btn--lg { padding: 18px 28px; font-size: var(--text-lg); }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--paper-3);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+}
+.chip--tangerine { background: var(--tangerine-l); border-color: var(--tangerine); color: var(--tangerine-d); }
+.chip--grape    { background: var(--grape-l); border-color: var(--grape);     color: var(--grape-d); }
+.chip--leaf     { background: var(--leaf-l);  border-color: var(--leaf);      color: var(--leaf-d); }
+.chip--sky      { background: var(--sky-l);   border-color: var(--sky);       color: var(--sky-d); }
+
+.input {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  padding: 12px 14px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  outline: none;
+  transition: border-color var(--dur-micro) var(--ease-out),
+              box-shadow   var(--dur-micro) var(--ease-out);
+}
+.input::placeholder { color: var(--text-muted); }
+.input:focus {
+  border-color: var(--tangerine);
+  box-shadow: var(--shadow-ring);
+}
+
+/* paper grain overlay — add .grain on a section */
+.grain {
+  position: relative;
+}
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.10 0 0 0 0 0.18 0 0 0 0.8 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}

@@ -1,0 +1,472 @@
+/* =============================================================
+   boastdrink — casino vintage overrides over PTGL tokens
+   ============================================================= */
+
+:root {
+  /* Casino palette (overrides PTGL defaults where it matters for game UI) */
+  --wine:         #6B1D2C;
+  --wine-d:       #4A0E1B;
+  --wine-l:       #8B2E3E;
+  --felt:         #0F3D2E;
+  --felt-d:       #082218;
+  --felt-l:       #1E5A43;
+  --gold:         #D4A94A;
+  --gold-d:       #9F7B24;
+  --gold-l:       #F0D484;
+  --gold-glow:    #F7DC8A;
+  --cream:        #F4E8D3;
+  --cream-d:      #E8D4A8;
+  --bone:         #FBF4E4;
+  --ember:        #E85A3C;
+
+  /* Re-bind PTGL semantic tokens to casino feel */
+  --bg:           var(--felt);
+  --surface:      var(--cream);
+  --text:         #1A0F0F;
+}
+
+body {
+  background: var(--felt);
+  color: var(--cream);
+  margin: 0;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Felt-table texture layer */
+.felt-bg {
+  background:
+    radial-gradient(ellipse 120% 80% at 50% 30%, var(--felt-l) 0%, var(--felt) 50%, var(--felt-d) 100%);
+  position: relative;
+}
+.felt-bg::before {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.22;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.02 0 0 0 0 0.1 0 0 0 0 0.05 0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+}
+
+/* Gold trim — repeated ornamental double-rule */
+.gold-trim {
+  border-top: 1.5px solid var(--gold);
+  border-bottom: 1.5px solid var(--gold);
+  box-shadow: inset 0 3px 0 -2px var(--gold-d), inset 0 -3px 0 -2px var(--gold-d);
+}
+
+/* Section-heading "eyebrow" with dots, like a playbill */
+.playbill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.playbill::before, .playbill::after {
+  content: "";
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+
+/* Casino primary button — gold shelf */
+.btn-casino {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 28px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, var(--gold-l) 0%, var(--gold) 55%, var(--gold-d) 100%);
+  color: var(--wine-d);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 17px;
+  letter-spacing: 0.02em;
+  border: 1.5px solid var(--gold-d);
+  box-shadow: 0 4px 0 var(--wine-d), 0 0 0 2px var(--wine-d) inset;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 160ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-transform: uppercase;
+}
+.btn-casino:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--wine-d), 0 0 0 2px var(--wine-d) inset;
+}
+.btn-casino:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-ghost-cream {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  border: 1.5px solid var(--cream-d);
+  cursor: pointer;
+  transition: background 160ms ease;
+  text-transform: uppercase;
+}
+.btn-ghost-cream:hover { background: rgba(244,232,211,0.08); }
+
+/* Input, casino style */
+.input-casino {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bone);
+  color: var(--wine-d);
+  border: 1.5px solid var(--gold);
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.06em;
+  outline: none;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  transition: border-color 180ms, box-shadow 180ms;
+}
+.input-casino::placeholder {
+  color: rgba(107, 29, 44, 0.4);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.input-casino:focus {
+  border-color: var(--ember);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 0 0 3px rgba(232,90,60,0.25);
+}
+
+/* Dice pip (the individual dot) */
+.pip {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #3a2515 0%, #1a0a05 80%);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.8), 0 0.5px 0 rgba(255,255,255,0.4);
+}
+
+/* Die face: 3D effect with bevel + pips */
+.die {
+  position: relative;
+  background: linear-gradient(145deg, #FFF8DB 0%, var(--cream) 50%, #D8C294 100%);
+  border-radius: 12px;
+  box-shadow:
+    inset 2px 2px 3px rgba(255,255,255,0.9),
+    inset -2px -2px 4px rgba(120,90,40,0.35),
+    0 4px 0 rgba(0,0,0,0.35),
+    0 8px 20px rgba(0,0,0,0.4);
+  display: grid;
+  place-items: center;
+  user-select: none;
+}
+.die.gold-die {
+  background: linear-gradient(145deg, var(--gold-l) 0%, var(--gold) 50%, var(--gold-d) 100%);
+}
+.die.wine-die {
+  background: linear-gradient(145deg, #B04050 0%, var(--wine) 50%, var(--wine-d) 100%);
+}
+.die.wine-die .pip {
+  background: radial-gradient(circle at 30% 30%, var(--gold-l) 0%, var(--gold-d) 80%);
+}
+.die.blessed {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  animation: blessed-glow 2.5s ease-in-out infinite;
+}
+@keyframes blessed-glow {
+  0%, 100% { outline-color: var(--gold); box-shadow:
+    inset 2px 2px 3px rgba(255,255,255,0.9),
+    inset -2px -2px 4px rgba(120,90,40,0.35),
+    0 4px 0 rgba(0,0,0,0.35),
+    0 0 0 rgba(247,220,138,0.0); }
+  50% { outline-color: var(--gold-glow); box-shadow:
+    inset 2px 2px 3px rgba(255,255,255,0.9),
+    inset -2px -2px 4px rgba(120,90,40,0.35),
+    0 4px 0 rgba(0,0,0,0.35),
+    0 0 20px rgba(247,220,138,0.7); }
+}
+
+/* 3-dot pip grid for a die face, using nth-child positioning */
+.pip-grid {
+  width: 78%; height: 78%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+}
+
+/* Cup (骰盅) — metallic cylinder */
+.cup {
+  position: relative;
+  width: 180px;
+  height: 200px;
+  border-radius: 90px / 30px 30px 50px 50px;
+  background: linear-gradient(180deg, var(--gold-l) 0%, var(--gold) 35%, var(--gold-d) 80%, #6A4D14 100%);
+  box-shadow:
+    inset 10px 0 20px rgba(0,0,0,0.3),
+    inset -10px 0 20px rgba(0,0,0,0.3),
+    inset 0 -15px 25px rgba(0,0,0,0.4),
+    0 15px 40px rgba(0,0,0,0.5);
+  border: 2px solid var(--gold-d);
+}
+.cup::before {
+  content: ""; position: absolute;
+  top: 4px; left: 8px; right: 8px; height: 16px;
+  background: radial-gradient(ellipse at center, var(--wine-d) 60%, var(--wine) 100%);
+  border-radius: 50%;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+}
+.cup::after {
+  content: ""; position: absolute;
+  top: 2px; left: 6px; right: 6px; height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold-d);
+  pointer-events: none;
+}
+
+/* Shake animation — cup rocks side to side */
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-8px, -4px) rotate(-6deg); }
+  25% { transform: translate(10px, -6px) rotate(8deg); }
+  40% { transform: translate(-6px, -8px) rotate(-4deg); }
+  55% { transform: translate(8px, -4px) rotate(6deg); }
+  70% { transform: translate(-10px, -2px) rotate(-8deg); }
+  85% { transform: translate(4px, -6px) rotate(3deg); }
+}
+.cup.shaking {
+  animation: shake 0.38s ease-in-out infinite;
+}
+
+/* Cup reveal — slide upward off the dice */
+@keyframes cup-lift {
+  0% { transform: translateY(0); opacity: 1; }
+  60% { transform: translateY(-280px) scale(0.85); opacity: 0.8; }
+  100% { transform: translateY(-380px) scale(0.7); opacity: 0; }
+}
+.cup.lifting {
+  animation: cup-lift 0.7s cubic-bezier(0.5, -0.2, 0.8, 0.4) forwards;
+  pointer-events: none;
+}
+
+/* Dice reveal pop */
+@keyframes die-pop {
+  0% { transform: scale(0) rotate(-120deg); opacity: 0; }
+  70% { transform: scale(1.15) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+.die.revealing {
+  animation: die-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+/* Confetti / sparkle for winning call */
+@keyframes sparkle-rise {
+  0% { transform: translate(0, 0) scale(0) rotate(0); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate(var(--dx, 0), var(--dy, -100px)) scale(1) rotate(var(--rot, 180deg)); opacity: 0; }
+}
+.sparkle {
+  position: absolute;
+  animation: sparkle-rise 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+/* Reel — slot-machine number picker */
+.reel {
+  position: relative;
+  width: 88px;
+  height: 128px;
+  background: linear-gradient(180deg, var(--wine-d) 0%, var(--wine) 50%, var(--wine-d) 100%);
+  border-radius: 10px;
+  border: 2px solid var(--gold);
+  overflow: hidden;
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.6),
+              0 4px 0 var(--wine-d);
+}
+.reel::before, .reel::after {
+  content: "";
+  position: absolute; left: 0; right: 0;
+  height: 42px;
+  pointer-events: none; z-index: 3;
+}
+.reel::before {
+  top: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.6), transparent);
+}
+.reel::after {
+  bottom: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.6), transparent);
+}
+.reel-window {
+  position: absolute; left: -2px; right: -2px;
+  top: 42px; height: 44px;
+  border-top: 2px solid var(--gold);
+  border-bottom: 2px solid var(--gold);
+  background: rgba(247, 220, 138, 0.08);
+  z-index: 2;
+  pointer-events: none;
+}
+.reel-track {
+  position: absolute; left: 0; right: 0; top: 0;
+  will-change: transform;
+  display: flex; flex-direction: column;
+  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reel-item {
+  height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gold-l);
+  text-shadow: 0 2px 0 rgba(0,0,0,0.5);
+}
+.reel-item.active {
+  color: var(--gold-glow);
+  font-size: 34px;
+  text-shadow: 0 0 12px var(--gold-glow), 0 2px 0 rgba(0,0,0,0.6);
+}
+
+/* Pip arrangements for die faces — use direct child index */
+.pip-grid .pip {
+  place-self: center;
+}
+/* Position pips per face value via body class on pip */
+.pip.p-tl { grid-column: 1; grid-row: 1; }
+.pip.p-tr { grid-column: 3; grid-row: 1; }
+.pip.p-ml { grid-column: 1; grid-row: 2; }
+.pip.p-mc { grid-column: 2; grid-row: 2; }
+.pip.p-mr { grid-column: 3; grid-row: 2; }
+.pip.p-bl { grid-column: 1; grid-row: 3; }
+.pip.p-br { grid-column: 3; grid-row: 3; }
+
+/* Player chip list */
+.player-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  background: rgba(244, 232, 211, 0.08);
+  border: 1px solid rgba(212, 169, 74, 0.25);
+  border-radius: 14px;
+}
+
+/* Section headings in Gloock */
+.display-font {
+  font-family: 'Gloock', serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--cream);
+}
+
+/* Little gold corner ornaments for card frames */
+.ornament-frame {
+  position: relative;
+  border: 1.5px solid var(--gold);
+  border-radius: 14px;
+  padding: 20px;
+  background: rgba(107, 29, 44, 0.45);
+}
+.ornament-frame::before, .ornament-frame::after,
+.ornament-frame > .orn-tr, .ornament-frame > .orn-br {
+  content: "";
+  position: absolute;
+  width: 10px; height: 10px;
+  border: 1.5px solid var(--gold);
+  background: var(--wine-d);
+}
+.ornament-frame::before { top: -6px; left: -6px; border-radius: 50%; }
+.ornament-frame::after  { top: -6px; right: -6px; border-radius: 50%; }
+.ornament-frame > .orn-tr { bottom: -6px; left: -6px; border-radius: 50%; }
+.ornament-frame > .orn-br { bottom: -6px; right: -6px; border-radius: 50%; }
+
+/* Scrollbars, hidden inside frame */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* Toast */
+.toast {
+  position: absolute;
+  bottom: 96px; left: 50%; transform: translateX(-50%);
+  padding: 10px 18px;
+  background: var(--wine-d);
+  color: var(--gold-l);
+  border-radius: 9999px;
+  border: 1px solid var(--gold);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  z-index: 100;
+  white-space: nowrap;
+  animation: toast-in 200ms ease-out;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Tweaks panel, floating */
+.tweaks-panel {
+  position: fixed;
+  right: 20px; bottom: 20px;
+  width: 280px;
+  padding: 18px;
+  background: var(--wine-d);
+  border: 1.5px solid var(--gold);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  color: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  z-index: 10000;
+}
+.tweaks-panel h4 {
+  margin: 0 0 12px; font-family: 'Gloock', serif;
+  font-weight: 400; font-size: 20px; color: var(--gold-l);
+  letter-spacing: 0.02em;
+}
+.tweaks-panel .row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-top: 1px solid rgba(212, 169, 74, 0.2);
+}
+.tweaks-panel .row:first-of-type { border-top: none; }
+.tweaks-panel .row .label { font-size: 13px; color: var(--cream); font-weight: 600; }
+.tweaks-panel button.seg {
+  padding: 4px 10px;
+  background: transparent; color: var(--cream);
+  border: 1px solid rgba(212,169,74,0.4); border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+  cursor: pointer;
+}
+.tweaks-panel button.seg.on {
+  background: var(--gold); color: var(--wine-d);
+  border-color: var(--gold);
+}
+.tweaks-panel .seg-group { display: flex; gap: 4px; }
+.tweaks-panel .switch {
+  width: 40px; height: 22px; border-radius: 9999px;
+  background: rgba(212,169,74,0.25);
+  border: 1px solid rgba(212,169,74,0.4);
+  position: relative; cursor: pointer; transition: background 180ms;
+}
+.tweaks-panel .switch.on { background: var(--gold); }
+.tweaks-panel .switch::after {
+  content: ""; position: absolute;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--cream); top: 2px; left: 2px;
+  transition: left 180ms ease;
+}
+.tweaks-panel .switch.on::after { left: 20px; background: var(--wine-d); }
