@@ -166,24 +166,26 @@
     }).eq('code', code);
   }
 
-  async function markShaken({ code, myId, nextShakeIdx, totalPlayers }) {
+  async function markShaken({ code, myId }) {
     const c = client();
     await c.from('dice').update({ shaken: true }).eq('room_code', code).eq('player_id', myId);
-    if (nextShakeIdx >= totalPlayers) {
-      // Move to view phase
-      await c.from('rooms').update({ phase: 'view', shake_idx: 0 }).eq('code', code);
-    } else {
-      await c.from('rooms').update({ shake_idx: nextShakeIdx }).eq('code', code);
+    // Check if all players have shaken — if so advance to view phase
+    const { data: room } = await c.from('rooms').select('phase').eq('code', code).maybeSingle();
+    if (!room || room.phase !== 'shake') return;
+    const { data: dice } = await c.from('dice').select('shaken').eq('room_code', code);
+    if (dice && dice.length && dice.every(d => d.shaken)) {
+      await c.from('rooms').update({ phase: 'view' }).eq('code', code);
     }
   }
 
-  async function markViewed({ code, myId, nextIdx, totalPlayers }) {
+  async function markViewed({ code, myId }) {
     const c = client();
     await c.from('dice').update({ viewed: true }).eq('room_code', code).eq('player_id', myId);
-    if (nextIdx >= totalPlayers) {
-      await c.from('rooms').update({ phase: 'bid', shake_idx: 0, bidder_idx: 0 }).eq('code', code);
-    } else {
-      await c.from('rooms').update({ shake_idx: nextIdx }).eq('code', code);
+    const { data: room } = await c.from('rooms').select('phase').eq('code', code).maybeSingle();
+    if (!room || room.phase !== 'view') return;
+    const { data: dice } = await c.from('dice').select('viewed').eq('room_code', code);
+    if (dice && dice.length && dice.every(d => d.viewed)) {
+      await c.from('rooms').update({ phase: 'bid', bidder_idx: 0 }).eq('code', code);
     }
   }
 

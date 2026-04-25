@@ -2,6 +2,9 @@
    boastdrink — casino vintage overrides over PTGL tokens
    ============================================================= */
 
+html, body { overflow-x: hidden; touch-action: pan-y; overscroll-behavior-x: none; max-width: 100vw; }
+* { box-sizing: border-box; }
+
 :root {
   /* Casino palette (overrides PTGL defaults where it matters for game UI) */
   --wine:         #6B1D2C;

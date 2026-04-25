@@ -29,6 +29,14 @@ function OnlineApp({ tweaks, setTweaks, t }) {
     return () => window.removeEventListener('message', h);
   }, []);
 
+  // Detect mobile viewport — use frame only on desktop
+  const [isMobile, setIsMobile] = uState(() => window.innerWidth < 600);
+  uEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 600);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   // URL-room support: ?room=XXXX
   const [pendingRoom, setPendingRoom] = uState(() => {
     try {
@@ -131,6 +139,16 @@ function OnlineApp({ tweaks, setTweaks, t }) {
     setConnecting(false);
   }
 
+  // Bug #3: if I was in a room but server says I'm no longer there, kick to landing
+  uEffect(() => {
+    if (roomCode && self?.id && players.length > 0 && !players.find(p => p.id === self.id)) {
+      disconnect();
+      setRoomCode(null); setServerRoom(null); setPlayers([]); setDiceRows([]);
+      setError(tweaks.lang === 'en' ? 'You left the room' : '你已離開房間');
+      setScreen('landing');
+    }
+  }, [players, self, roomCode]);
+
   async function handleLeave() {
     if (roomCode && self?.id) await window.BD.leaveRoom({ code: roomCode, myId: self.id });
     disconnect();
@@ -173,18 +191,10 @@ function OnlineApp({ tweaks, setTweaks, t }) {
   // Shake handler: my shake complete
   async function handleShakeDone() {
     if (!roomCode || !self) return;
-    await window.BD.markShaken({
-      code: roomCode, myId: self.id,
-      nextShakeIdx: serverRoom.shake_idx + 1,
-      totalPlayers: players.length,
-    });
+    await window.BD.markShaken({ code: roomCode, myId: self.id });
   }
   async function handleViewedResult() {
-    await window.BD.markViewed({
-      code: roomCode, myId: self.id,
-      nextIdx: serverRoom.shake_idx + 1,
-      totalPlayers: players.length,
-    });
+    await window.BD.markViewed({ code: roomCode, myId: self.id });
   }
   async function handleBid({ count, face }) {
     await window.BD.placeBid({
@@ -263,11 +273,17 @@ function OnlineApp({ tweaks, setTweaks, t }) {
       return <LobbyScreen room={room} self={selfForScreens} onStart={handleStart} onLeave={handleLeave} onKick={handleKick} t={t} />;
     }
     if (phase === 'shake' || phase === 'view') {
-      const isMyTurn = currentPlayer?.id === self.id;
-      if (!isMyTurn) return <WaitingScreen room={room} currentPlayer={currentPlayer} phase={phase} t={t} />;
+      // Parallel: everyone shakes/views at the same time
       if (!myDice) return <LoadingScreen t={t} />;
+      // If I've already shaken/viewed, show waiting screen
+      const done = phase === 'shake' ? myDice.shaken : myDice.viewed;
+      if (done) {
+        const waitingFor = (phase === 'shake' ? diceRows.filter(d => !d.shaken) : diceRows.filter(d => !d.viewed))
+          .map(d => players.find(p => p.id === d.player_id)?.name).filter(Boolean);
+        return <WaitingScreen room={room} waitingFor={waitingFor} phase={phase} t={t} />;
+      }
       return <GameScreen
-        room={room} currentPlayer={currentPlayer} phase={phase}
+        room={room} currentPlayer={selfForScreens} phase={phase}
         currentBid={serverRoom.current_bid}
         cupState={'idle'} dice={myDice.values}
         isBlessedHolder={myDice.player_id === serverRoom.blessed_holder}
@@ -318,15 +334,23 @@ function OnlineApp({ tweaks, setTweaks, t }) {
   return (
     <div style={{
       minHeight: '100vh',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: 20, background: '#1a0a0f',
+      display: 'flex', alignItems: isMobile ? 'stretch' : 'center', justifyContent: 'center',
+      padding: isMobile ? 0 : 20, background: isMobile ? 'var(--felt)' : '#1a0a0f',
+      width: '100%', maxWidth: '100vw', overflowX: 'hidden',
     }}>
-      <IOSDevice dark={true} width={390} height={844}>
-        <div style={{ width: '100%', height: '100%', background: 'var(--felt)', position: 'relative' }}>
+      {isMobile ? (
+        <div style={{ width: '100%', minHeight: '100vh', background: 'var(--felt)', position: 'relative' }}>
           {screenEl}
           {error && <div className="toast" onClick={() => setError(null)}>{error}</div>}
         </div>
-      </IOSDevice>
+      ) : (
+        <IOSDevice dark={true} width={390} height={844}>
+          <div style={{ width: '100%', height: '100%', background: 'var(--felt)', position: 'relative' }}>
+            {screenEl}
+            {error && <div className="toast" onClick={() => setError(null)}>{error}</div>}
+          </div>
+        </IOSDevice>
+      )}
       {tweaksOpen && window.TweaksPanel && <window.TweaksPanel tweaks={tweaks} setTweaks={setTweaks} onClose={() => setTweaksOpen(false)} />}
     </div>
   );
@@ -346,14 +370,17 @@ function LoadingScreen({ t }) {
   );
 }
 
-function WaitingScreen({ room, currentPlayer, phase, currentBid, t }) {
+function WaitingScreen({ room, currentPlayer, waitingFor, phase, currentBid, t }) {
   const label = phase === 'shake' ? t('nowShake') : phase === 'view' ? t('nowView') : t('nowBid');
+  const headline = waitingFor && waitingFor.length
+    ? (waitingFor.length === 1 ? waitingFor[0] : `${waitingFor.length} 人`)
+    : (currentPlayer?.name || '—');
   return (
     <ScreenShell>
       <div style={{ padding: '40px 28px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
         <div className="playbill">{label}</div>
         <div className="display-font" style={{ fontSize: 36, color: 'var(--gold-l)' }}>
-          {currentPlayer?.name || '—'}
+          {headline}
         </div>
         <div style={avatarStyle(currentPlayer?.colorIdx || 0)} />
         <div className={`cup ${phase === 'shake' ? 'shaking' : ''}`}
