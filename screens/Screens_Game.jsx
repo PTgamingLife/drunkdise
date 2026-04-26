@@ -136,7 +136,7 @@ function GameScreen({ room, currentPlayer, phase, currentBid, onShakeDone, onBid
     if (liftOffset < -50) {
       setRevealed(true);
       if (window.sfx) window.sfx.open();
-      setTimeout(() => onViewedResult && onViewedResult(), 1400);
+      // No auto-advance — user must tap "看完了" to confirm
     }
     setLiftStartY(null);
     setLiftOffset(0);
@@ -208,8 +208,8 @@ function GameScreen({ room, currentPlayer, phase, currentBid, onShakeDone, onBid
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         margin: '10px 0',
       }}>
-        {/* Dice revealed underneath */}
-        {(phase === 'view' && revealed) || cupState === 'revealed' ? (
+        {/* Dice revealed underneath - show in view-revealed AND bid phase */}
+        {((phase === 'view' && revealed) || cupState === 'revealed' || (phase === 'bid' && dice && dice.length > 0)) ? (
           <div style={{
             position: 'absolute', top: '50%', left: '50%',
             transform: 'translate(-50%, -50%)',
@@ -230,8 +230,8 @@ function GameScreen({ room, currentPlayer, phase, currentBid, onShakeDone, onBid
           </div>
         ) : null}
 
-        {/* The cup itself */}
-        {cupState !== 'revealed' && !(phase === 'view' && revealed) && (
+        {/* The cup itself - hide during bid phase too since dice are shown */}
+        {cupState !== 'revealed' && !(phase === 'view' && revealed) && phase !== 'bid' && (
           <div
             className={`cup ${cupCls}`}
             style={{
@@ -290,9 +290,16 @@ function GameScreen({ room, currentPlayer, phase, currentBid, onShakeDone, onBid
         {phase === 'view' && revealed && (
           <div style={{ textAlign: 'center' }}>
             <div className="playbill" style={{ marginBottom: 8 }}>{t('yourHand')}</div>
-            <div style={{ fontSize: 14, color: 'var(--cream)', fontStyle: 'italic', opacity: 0.85 }}>
+            <div style={{ fontSize: 14, color: 'var(--cream)', fontStyle: 'italic', opacity: 0.85, marginBottom: 14 }}>
               {t('rememberThenPass')}
             </div>
+            <button
+              className="btn-primary"
+              onClick={() => onViewedResult && onViewedResult()}
+              style={{ minWidth: 200 }}
+            >
+              {t('doneViewing')}
+            </button>
           </div>
         )}
 

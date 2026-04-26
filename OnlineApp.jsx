@@ -302,7 +302,7 @@ function OnlineApp({ tweaks, setTweaks, t }) {
       if (done) {
         const waitingFor = (phase === 'shake' ? diceRows.filter(d => !d.shaken) : diceRows.filter(d => !d.viewed))
           .map(d => players.find(p => p.id === d.player_id)?.name).filter(Boolean);
-        return <WaitingScreen room={room} waitingFor={waitingFor} phase={phase} t={t} />;
+        return <WaitingScreen room={room} waitingFor={waitingFor} phase={phase} myDice={myDice?.values} isBlessedHolder={myDice?.player_id === serverRoom.blessed_holder} t={t} />;
       }
       return <GameScreen
         room={room} currentPlayer={selfForScreens} phase={phase}
@@ -317,7 +317,7 @@ function OnlineApp({ tweaks, setTweaks, t }) {
     }
     if (phase === 'bid') {
       const isMyTurn = currentPlayer?.id === self.id;
-      if (!isMyTurn) return <WaitingScreen room={room} currentPlayer={currentPlayer} phase={phase} currentBid={serverRoom.current_bid} t={t} />;
+      if (!isMyTurn) return <WaitingScreen room={room} currentPlayer={currentPlayer} phase={phase} currentBid={serverRoom.current_bid} myDice={myDice?.values} isBlessedHolder={myDice?.player_id === serverRoom.blessed_holder} t={t} />;
       return <GameScreen
         room={room} currentPlayer={currentPlayer} phase={phase}
         currentBid={serverRoom.current_bid}
@@ -392,7 +392,7 @@ function LoadingScreen({ t }) {
   );
 }
 
-function WaitingScreen({ room, currentPlayer, waitingFor, phase, currentBid, t }) {
+function WaitingScreen({ room, currentPlayer, waitingFor, phase, currentBid, myDice, isBlessedHolder, t }) {
   const label = phase === 'shake' ? t('nowShake') : phase === 'view' ? t('nowView') : t('nowBid');
   const headline = waitingFor && waitingFor.length
     ? (waitingFor.length === 1 ? waitingFor[0] : `${waitingFor.length} 人`)
@@ -405,8 +405,30 @@ function WaitingScreen({ room, currentPlayer, waitingFor, phase, currentBid, t }
           {headline}
         </div>
         <div style={avatarStyle(currentPlayer?.colorIdx || 0)} />
-        <div className={`cup ${phase === 'shake' ? 'shaking' : ''}`}
-          style={{ width: 120, height: 140, marginTop: 12, transform: 'rotate(-4deg)' }} />
+
+        {/* My own dice — visible while waiting (only after viewing in shake/view phases is unnecessary; in bid phase always show) */}
+        {myDice && myDice.length > 0 && phase === 'bid' && (
+          <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <div className="playbill" style={{ fontSize: 11 }}>{t('myDice')}</div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 280 }}>
+              {myDice.map((v, i) => (
+                <ShufflingDie
+                  key={i} finalValue={v} size={36}
+                  color={i === 0 && isBlessedHolder ? 'gold' : 'ivory'}
+                  blessed={i === 0 && isBlessedHolder}
+                  isShuffling={false}
+                  revealDelay={0}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {phase !== 'bid' && (
+          <div className={`cup ${phase === 'shake' ? 'shaking' : ''}`}
+            style={{ width: 120, height: 140, marginTop: 12, transform: 'rotate(-4deg)' }} />
+        )}
+
         <div style={{ fontSize: 14, color: 'var(--cream)', opacity: 0.75, fontStyle: 'italic', marginTop: 8 }}>
           {phase === 'shake' && '等他搖骰...'}
           {phase === 'view' && '等他看骰...'}
