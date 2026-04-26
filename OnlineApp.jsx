@@ -64,8 +64,27 @@ function OnlineApp({ tweaks, setTweaks, t }) {
     localStorage.setItem('bd_online', JSON.stringify({ self, roomCode }));
   }, [self, roomCode]);
 
-  async function refreshState(code) {
+  async function refreshState(code, myIdOverride) {
+    const myId = myIdOverride || self?.id;
     const s = await window.BD.fetchRoomState({ code });
+    if (!s.room) {
+      // Room gone — eject
+      disconnect();
+      localStorage.removeItem('bd_online');
+      setRoomCode(null); setServerRoom(null); setPlayers([]); setDiceRows([]);
+      setError(tweaks?.lang === 'en' ? 'Room closed' : '房間已關閉');
+      setScreen('landing');
+      return;
+    }
+    if (myId && s.players.length && !s.players.find(p => p.id === myId)) {
+      // I'm not in this room anymore
+      disconnect();
+      localStorage.removeItem('bd_online');
+      setRoomCode(null); setServerRoom(null); setPlayers([]); setDiceRows([]);
+      setError(tweaks?.lang === 'en' ? 'You left the room' : '你已離開房間');
+      setScreen('landing');
+      return;
+    }
     setServerRoom(s.room);
     setPlayers(s.players);
     setHistory(s.history);
@@ -77,9 +96,12 @@ function OnlineApp({ tweaks, setTweaks, t }) {
     if (unsubRef.current) unsubRef.current();
     unsubRef.current = window.BD.subscribe({
       code,
-      onChange: () => refreshState(code),
+      onChange: () => refreshState(code, myId),
     });
-    refreshState(code).then(() => setScreen('lobby'));
+    refreshState(code, myId).then(() => {
+      // Only land in lobby if we're still connected after refresh
+      if (unsubRef.current) setScreen('lobby');
+    });
     // heartbeat + host-side pruning
     clearInterval(hbRef.current);
     hbRef.current = setInterval(async () => {
